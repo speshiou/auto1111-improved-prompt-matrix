@@ -11,10 +11,10 @@ class Script(scripts.Script):
         return "Improved prompt matrix"
 
     def ui(self, is_img2img):
-        dummy = gr.Checkbox(label="Usage: a <corgi|cat> wearing <goggles|a hat>")
-        return [dummy]
+        different_seeds = gr.Checkbox(label='Use different seed for each picture', value=False, elem_id=self.elem_id("different_seeds"))
+        return [different_seeds]
 
-    def run(self, p, dummy):
+    def run(self, p, different_seeds):
         modules.processing.fix_seed(p)
 
         original_prompt = p.prompt[0] if type(p.prompt) == list else p.prompt
@@ -57,7 +57,8 @@ class Script(scripts.Script):
         shared.total_tqdm.updateTotal(total_steps)
 
         p.prompt = all_prompts * p.n_iter
-        p.seed = [item for item in range(int(p.seed), int(p.seed) + p.n_iter) for _ in range(len(all_prompts))]
+        # p.seed = [item for item in range(int(p.seed), int(p.seed) + p.n_iter) for _ in range(len(all_prompts))]
+        p.seed = [p.seed + (i if different_seeds else 0) for i in range(len(all_prompts))]
         p.n_iter = total_images
         p.prompt_for_display = original_prompt
 
