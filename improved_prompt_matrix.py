@@ -25,7 +25,8 @@ class Script(scripts.Script):
             if data:
                 matrix_count += 1
                 span = data.span(1)
-                items = data.group(2).split("|")
+                # items = data.group(2).split("|")
+                items = [x for x in data.group(2).split("|") if x]
                 prompt_matrix_parts.extend(items)
 
         all_prompts = [original_prompt]
@@ -38,7 +39,8 @@ class Script(scripts.Script):
                         # Remove last prompt as it has a found_matrix
                         all_prompts.remove(this_prompt)
                         span = data.span(1)
-                        items = data.group(3).split("|")
+                        # items = data.group(3).split("|")
+                        items = [x for x in data.group(3).split("|") if x]
                         for item in items:
                             new_prompt = this_prompt[:span[0]] + item.strip() + this_prompt[span[1]:]
                             all_prompts.append(new_prompt.strip())
